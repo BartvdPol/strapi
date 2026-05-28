@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "personen",
+  "info": {
+    "singularName": "persoon",
+    "pluralName": "personen",
+    "displayName": "persoon"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "external_id": {
+      "type": "integer",
+      "unique": true
+    },
+    "username": {
+      "type": "string",
+      "required": true
+    },
+    "user_role": {
+      "type": "string"
+    }
+  }
+}

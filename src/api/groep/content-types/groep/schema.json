@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "groeps",
+  "info": {
+    "singularName": "groep",
+    "pluralName": "groeps",
+    "displayName": "groep"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "external_id": {
+      "type": "integer",
+      "unique": true
+    },
+    "naam": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

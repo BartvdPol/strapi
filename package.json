@@ -1,0 +1,30 @@
+{
+  "name": "strapi-temporal-app",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Strapi application with temporal-relations plugin",
+  "scripts": {
+    "develop": ".\\.tools\\node\\node.exe .\\node_modules\\@strapi\\strapi\\bin\\strapi.js develop",
+    "start": ".\\.tools\\node\\node.exe .\\node_modules\\@strapi\\strapi\\bin\\strapi.js start",
+    "build": ".\\.tools\\node\\node.exe .\\node_modules\\@strapi\\strapi\\bin\\strapi.js build",
+    "strapi": ".\\.tools\\node\\node.exe .\\node_modules\\@strapi\\strapi\\bin\\strapi.js",
+    "test": ".\\.tools\\node\\node.exe --test .\\tests\\**\\*.test.js"
+  },
+  "dependencies": {
+    "@strapi/strapi": "5.46.1",
+    "@strapi/plugin-users-permissions": "5.46.1",
+    "better-sqlite3": "^11.10.0",
+    "pg": "^8.11.3",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "styled-components": "^6.0.0"
+  },
+  "devDependencies": {
+    "@strapi/types": "5.46.1"
+  },
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=6.0.0"
+  }
+}

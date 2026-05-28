@@ -1,0 +1,8 @@
+- Loading Strapi
+- Building build context
+✔ Building build context (34ms)
+- Creating admin
+✔ Creating admin (793ms)
+✔ Loading Strapi (3409ms)
+- Generating types
+✔ Generating types (328ms)

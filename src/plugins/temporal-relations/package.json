@@ -1,0 +1,39 @@
+{
+  "name": "strapi-plugin-temporal-relations",
+  "version": "1.0.0",
+  "description": "Strapi plugin to link content types with date-range (start_date / end_date) based relationships",
+  "strapi": {
+    "kind": "plugin",
+    "name": "temporal-relations",
+    "displayName": "Temporal Relations",
+    "description": "Link content types with start_date / end_date date-range relationships"
+  },
+  "main": "./server/index.js",
+  "exports": {
+    "./strapi-admin": {
+      "import": "./admin/src/index.js",
+      "require": "./admin/src/index.js",
+      "default": "./admin/src/index.js"
+    },
+    "./server": {
+      "import": "./server/index.js",
+      "require": "./server/index.js",
+      "default": "./server/index.js"
+    },
+    "./strapi-server": {
+      "import": "./server/index.js",
+      "require": "./server/index.js",
+      "default": "./server/index.js"
+    }
+  },
+  "keywords": [
+    "strapi",
+    "plugin",
+    "temporal",
+    "date-range",
+    "relations"
+  ],
+  "peerDependencies": {
+    "@strapi/strapi": "^5.0.0"
+  }
+}
