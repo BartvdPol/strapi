@@ -4,6 +4,8 @@ const TEMPORAL_BASE = '/api/temporal-relations';
 const BEDRIJF_UID = 'api::bedrijf.bedrijf';
 const OPEN_END = '2999-12-31';
 const ORDER_KEY = 'temporal-relations-bedrijf-panel-order-v1';
+const BEREKEND_OP_OPTIONS = ['Brutowinst', 'Nettowinst', 'Restant winst'];
+const WINSTGERECHTIGDE_TYPE_OPTIONS = ['Aandeelhouder', 'Beherend vennoot', 'Commanditair vennoot'];
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -135,11 +137,20 @@ function MetadataFields({ type, state, setState }) {
       <>
         <div>
           <label style={s.label}>Berekend op</label>
-          <input style={s.input} value={state.berekendOp} onChange={(e) => onField('berekendOp', e.target.value)} />
+          <select style={s.input} value={state.berekendOp} onChange={(e) => onField('berekendOp', e.target.value)}>
+            {BEREKEND_OP_OPTIONS.map((option) => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label style={s.label}>Winstgerechtigde type</label>
-          <input style={{ ...s.input, width: 150 }} value={state.winstgerechtigdeType} onChange={(e) => onField('winstgerechtigdeType', e.target.value)} />
+          <select style={{ ...s.input, width: 170 }} value={state.winstgerechtigdeType} onChange={(e) => onField('winstgerechtigdeType', e.target.value)}>
+            <option value="">Selecteer</option>
+            {WINSTGERECHTIGDE_TYPE_OPTIONS.map((option) => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label style={s.label}>% eerste schaal</label>
@@ -376,7 +387,7 @@ function TypeSection({
 
         {!isEditing && (
           <>
-            <div style={s.dates}>{fmtDate(link.start_date)} -> {fmtDate(link.end_date)}</div>
+            <div style={s.dates}>{fmtDate(link.start_date)} {'->'} {fmtDate(link.end_date)}</div>
             {meta && <div style={s.meta}>{meta}</div>}
             <div style={s.actions}>
               <button style={s.actionBtn} onClick={() => startEdit(link)} disabled={saving}>Bewerk</button>

@@ -27,14 +27,14 @@ Use a dedicated link type for company-to-company profit links.
 
 Recommended name:
 
-- `bedrijf_winst_ontvanger`
+- `bedrijf_winst_ontvangen`
 
 Example request:
 
 ```json
 POST /api/temporal-relations/link-types
 {
-  "name": "bedrijf_winst_ontvanger",
+  "name": "bedrijf_winst_ontvangen",
   "sourceUid": "api::bedrijf.bedrijf",
   "targetUid": "api::bedrijf.bedrijf"
 }
@@ -48,10 +48,16 @@ Notes:
 
 - The plugin creates a dedicated physical table automatically.
 - Table name pattern: `temporal_links_<linkTypeName>`.
-- For this example: `temporal_links_bedrijf_winst_ontvanger`.
-- For same-entity links (bedrijf -> bedrijf), source and target columns are auto-separated to avoid collisions:
-  - `source_bedrijf_id`
-  - `target_bedrijf_id`
+- For this example: `temporal_links_bedrijf_winst_ontvangen`.
+- For this profit type, physical source/target columns are:
+  - `bron_bedrijf_id`
+  - `ontvanger_bedrijf_id_of_persoon_id`
+- Extra typed columns are also stored physically:
+  - `berekend_op`
+  - `percentage_eerste_schaal`
+  - `bedrag_eerste_schaal`
+  - `restant_percentage`
+  - `winstgerechtigde_type`
 
 ## 3. Map STAM.winstgerechtigden to Link Payload
 
@@ -77,7 +83,7 @@ Example import request:
 ```json
 POST /api/temporal-relations/links/import
 {
-  "linkType": "bedrijf_winst_ontvanger",
+  "linkType": "bedrijf_winst_ontvangen",
   "links": [
     {
       "sourceId": 336,
@@ -121,13 +127,13 @@ Use separate endpoints:
 1. Gives profit (outgoing from company)
 
 ```text
-GET /api/temporal-relations/links/source-history?linkType=bedrijf_winst_ontvanger&sourceId=<bedrijf_id>
+GET /api/temporal-relations/links/source-history?linkType=bedrijf_winst_ontvangen&sourceId=<bedrijf_id>
 ```
 
 2. Receives profit (incoming to company)
 
 ```text
-GET /api/temporal-relations/links/target-history?linkType=bedrijf_winst_ontvanger&targetId=<bedrijf_id>
+GET /api/temporal-relations/links/target-history?linkType=bedrijf_winst_ontvangen&targetId=<bedrijf_id>
 ```
 
 Visual:
@@ -145,13 +151,13 @@ Invoke-WebRequest -UseBasicParsing "http://localhost:1337/api/temporal-relations
 2. Outgoing links for company 336:
 
 ```powershell
-Invoke-WebRequest -UseBasicParsing "http://localhost:1337/api/temporal-relations/links/source-history?linkType=bedrijf_winst_ontvanger&sourceId=336" | Select-Object -ExpandProperty Content
+Invoke-WebRequest -UseBasicParsing "http://localhost:1337/api/temporal-relations/links/source-history?linkType=bedrijf_winst_ontvangen&sourceId=336" | Select-Object -ExpandProperty Content
 ```
 
 3. Incoming links for company 334:
 
 ```powershell
-Invoke-WebRequest -UseBasicParsing "http://localhost:1337/api/temporal-relations/links/target-history?linkType=bedrijf_winst_ontvanger&targetId=334" | Select-Object -ExpandProperty Content
+Invoke-WebRequest -UseBasicParsing "http://localhost:1337/api/temporal-relations/links/target-history?linkType=bedrijf_winst_ontvangen&targetId=334" | Select-Object -ExpandProperty Content
 ```
 
 ## 7. Handling mixed company/person receiver field
@@ -160,8 +166,8 @@ Your source field `ontvanger_bedrijf_id_of_persoon_id` may contain person values
 
 Recommended approach:
 
-1. Company receivers: import into `bedrijf_winst_ontvanger` (this README flow).
-2. Person receivers: import into a separate link type, for example `bedrijf_winst_ontvanger_persoon` with:
+1. Company receivers: import into `bedrijf_winst_ontvangen` (this README flow).
+2. Person receivers: import into a separate link type, for example `bedrijf_winst_ontvangen_persoon` with:
 - `sourceUid = api::bedrijf.bedrijf`
 - `targetUid = api::persoon.persoon`
 
@@ -179,7 +185,7 @@ To inspect:
 
 ## 9. Quick summary
 
-1. Create `bedrijf_winst_ontvanger` once.
+1. Create `bedrijf_winst_ontvangen` once.
 2. Import rows using `sourceId` (giver) and `targetId` (receiver).
 3. Query gives via `source-history` and receives via `target-history`.
 4. Reverse visibility is automatic.
@@ -218,7 +224,7 @@ Inside that page, use two tabs:
 
 1. Open the Relation Types tab.
 2. In New relation type, fill:
-- Machine name: `bedrijf_winst_ontvanger`
+- Machine name: `bedrijf_winst_ontvangen`
 - Source UID: `api::bedrijf.bedrijf`
 - Target UID: `api::bedrijf.bedrijf`
 - Optional labels and description.
@@ -234,29 +240,30 @@ Result:
 1. Open the Links tab.
 2. Click + Create link.
 3. Fill:
-- Relation type: `bedrijf_winst_ontvanger`
+- Relation type: `bedrijf_winst_ontvangen`
 - Source ID: value from `bron_bedrijf_id`
 - Target ID: value from `ontvanger_bedrijf_id_of_persoon_id` when it is a company id
 - Start date: `valid_from`
 - End date: `valid_to`
-- Metadata JSON: store business fields, for example:
+- Typed fields (no raw JSON needed):
+  - `berekendOp` (select)
+  - `winstgerechtigdeType` (select)
+  - `percentageEersteSchaal`
+  - `bedragEersteSchaal`
+  - `restantPercentage`
+  - `winstgerechtigdenId`
 
-```json
-{
-  "winstgerechtigdenId": 24,
-  "berekendOp": "Nettowinst",
-  "percentageEersteSchaal": 70.0,
-  "restantPercentage": null,
-  "winstgerechtigdeType": "Beherend vennoot"
-}
-```
+Allowed select values:
+
+- `berekendOp`: `Brutowinst`, `Nettowinst`, `Restant winst`
+- `winstgerechtigdeType`: `Aandeelhouder`, `Beherend vennoot`, `Commanditair vennoot`
 
 4. Click Create.
 
 ### 10.3 Bulk import in GUI
 
 1. In Links, click Bulk import.
-2. Choose relation type: `bedrijf_winst_ontvanger`.
+2. Choose relation type: `bedrijf_winst_ontvangen`.
 3. Paste tab-separated rows in this format:
 
 ```text
@@ -270,6 +277,11 @@ Example row:
 ```
 
 4. Click Import.
+
+Validation note:
+
+- API and import now enforce the same allowed select values server-side.
+- Invalid `berekendOp` or `winstgerechtigdeType` values are rejected with `400`.
 
 ### 10.4 Split in GUI: Gives vs Receives
 
@@ -323,8 +335,7 @@ For each dynamic link row in the Bedrijf panel, you can now:
 
 1. Open item: jump to the linked content item in Content Manager.
 2. Bewerk: edit dates and typed extra fields.
-3. Beëindig: set end date to today.
-4. Verwijder: delete link row.
+3. Verwijder: delete link row.
 
 ### 10.8 Compact add controls
 
@@ -345,8 +356,8 @@ Use those to reorder visual blocks in the Bedrijf panel. The order is stored in 
 Dynamic forms now render typed fields per link type profile.
 
 1. Profit-style links (`winst` in link type name):
-- berekendOp
-- winstgerechtigdeType
+- berekendOp (select: Brutowinst, Nettowinst, Restant winst)
+- winstgerechtigdeType (select: Aandeelhouder, Beherend vennoot, Commanditair vennoot)
 - percentageEersteSchaal
 - bedragEersteSchaal
 - restantPercentage
@@ -363,7 +374,7 @@ If `ontvanger_bedrijf_id_of_persoon_id` can represent both company and person id
 
 Recommended split:
 
-1. `bedrijf_winst_ontvanger` for company receivers.
-2. `bedrijf_winst_ontvanger_persoon` for person receivers.
+1. `bedrijf_winst_ontvangen` for company receivers.
+2. `bedrijf_winst_ontvangen_persoon` for person receivers.
 
 This keeps GUI filters and query semantics clear.
