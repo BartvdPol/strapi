@@ -1,21 +1,16 @@
 'use strict';
 
 const contentTypes = require('./content-types');
-const controllers  = require('./controllers');
-const middlewares  = require('./middlewares');
-const policies     = require('./policies');
-const routes       = require('./routes');
-const services     = require('./services');
+const controllers = require('./controllers');
+const middlewares = require('./middlewares');
+const policies = require('./policies');
+const routes = require('./routes');
+const services = require('./services');
 
-// ─── Seed data ────────────────────────────────────────────────────────────────
-
-const LINK_TYPE_UID = 'plugin::temporal-relations.temporal-link-type';
-const LINK_UID      = 'plugin::temporal-relations.temporal-link';
-const BEDRIJF_UID   = 'api::bedrijf.bedrijf';
-const GROEP_UID     = 'api::groep.groep';
-const PERSON_UID    = 'api::persoon.persoon';
-const OPEN_START    = '0001-01-01';
-const OPEN_END      = '2999-12-31';
+const BEDRIJF_UID = 'api::bedrijf.bedrijf';
+const GROEP_UID = 'api::groep.groep';
+const PERSON_UID = 'api::persoon.persoon';
+const OPEN_END = '2999-12-31';
 
 const SEED_BEDRIJVEN = [
   { external_id: 1, naam: 'ACME BV' },
@@ -60,74 +55,49 @@ const SEED_PERSONEN = [
   { external_id: 1648, username: 'persoon_1648', user_role: null },
 ];
 
-/** Link type definitions */
 const SEED_LINK_TYPES = [
   {
-    name:         'bedrijven_groepen_range',
-    source_uid:   'api::bedrijf.bedrijf',
-    target_uid:   'api::groep.groep',
-    source_label: 'Bedrijf',
-    target_label: 'Groep',
-    description:  'Time-bounded membership of a bedrijf in a bedrijven-groep',
+    name: 'bedrijven_groepen_range',
+    sourceUid: BEDRIJF_UID,
+    targetUid: GROEP_UID,
   },
   {
-    name:         'koppeling_persoon_bedrijf',
-    source_uid:   'api::persoon.persoon',
-    target_uid:   'api::bedrijf.bedrijf',
-    source_label: 'Persoon',
-    target_label: 'Bedrijf',
-    description:  'Time-bounded link between a persoon and a bedrijf',
+    name: 'koppeling_persoon_bedrijf',
+    sourceUid: PERSON_UID,
+    targetUid: BEDRIJF_UID,
   },
 ];
 
-/** Temporal links – bedrijven_groepen_range (source = bedrijf_id, target = groep_id) */
 const SEED_LINKS_BGR = [
-  // Real SQL data (bedrijf_ids from STAM.bedrijven)
-  { source_id: 214, target_id: 275, start_date: '2000-01-01', end_date: '2025-03-31' },
-  { source_id: 214, target_id:  78, start_date: '2025-04-01', end_date: OPEN_END     },
-  { source_id:   4, target_id: 228, start_date: '2000-01-01', end_date: OPEN_END     },
-  { source_id:   5, target_id:  38, start_date: '2000-01-01', end_date: OPEN_END     },
-  { source_id:   6, target_id:  32, start_date: '2000-01-01', end_date: OPEN_END     },
-  { source_id:   7, target_id: 244, start_date: '2000-01-01', end_date: OPEN_END     },
-  { source_id:   8, target_id: 244, start_date: '2000-01-01', end_date: OPEN_END     },
-  { source_id:   9, target_id: 244, start_date: '2000-01-01', end_date: OPEN_END     },
-  { source_id:  10, target_id: 244, start_date: '2000-01-01', end_date: OPEN_END     },
-  // Demo entries on external IDs for ACME BV
-  { source_id:   1, target_id: 275, start_date: '2018-01-01', end_date: '2024-12-31' },
-  { source_id:   1, target_id:  78, start_date: '2025-01-01', end_date: OPEN_END     },
+  { sourceId: 214, targetId: 275, startDate: '2000-01-01', endDate: '2025-03-31' },
+  { sourceId: 214, targetId: 78, startDate: '2025-04-01', endDate: OPEN_END },
+  { sourceId: 4, targetId: 228, startDate: '2000-01-01', endDate: OPEN_END },
+  { sourceId: 5, targetId: 38, startDate: '2000-01-01', endDate: OPEN_END },
+  { sourceId: 6, targetId: 32, startDate: '2000-01-01', endDate: OPEN_END },
+  { sourceId: 7, targetId: 244, startDate: '2000-01-01', endDate: OPEN_END },
+  { sourceId: 8, targetId: 244, startDate: '2000-01-01', endDate: OPEN_END },
+  { sourceId: 9, targetId: 244, startDate: '2000-01-01', endDate: OPEN_END },
+  { sourceId: 10, targetId: 244, startDate: '2000-01-01', endDate: OPEN_END },
+  { sourceId: 1, targetId: 275, startDate: '2018-01-01', endDate: '2024-12-31' },
+  { sourceId: 1, targetId: 78, startDate: '2025-01-01', endDate: OPEN_END },
 ];
 
-/** Temporal links – koppeling_persoon_bedrijf (source = persoon_id, target = bedrijf_id) */
 const SEED_LINKS_KPB = [
-  { source_id:  208, target_id:   1, metadata: { tekenbevoegd: false } },
-  { source_id: 1638, target_id:  90, metadata: { tekenbevoegd: false } },
-  { source_id: 1633, target_id: 157, metadata: { tekenbevoegd: false } },
-  { source_id:  358, target_id: 157, metadata: { tekenbevoegd: false } },
-  { source_id: 1634, target_id: 157, metadata: { tekenbevoegd: false } },
-  { source_id: 1636, target_id: 157, metadata: { tekenbevoegd: false } },
-  { source_id: 1637, target_id: 157, metadata: { tekenbevoegd: false } },
-  { source_id: 1639, target_id: 157, metadata: { tekenbevoegd: false } },
-  { source_id: 1648, target_id: 157, metadata: { tekenbevoegd: false } },
-  { source_id: 1641, target_id: 157, metadata: { tekenbevoegd: false } },
+  { sourceId: 208, targetId: 1, metadata: { tekenbevoegd: false } },
+  { sourceId: 1638, targetId: 90, metadata: { tekenbevoegd: false } },
+  { sourceId: 1633, targetId: 157, metadata: { tekenbevoegd: false } },
+  { sourceId: 358, targetId: 157, metadata: { tekenbevoegd: false } },
+  { sourceId: 1634, targetId: 157, metadata: { tekenbevoegd: false } },
+  { sourceId: 1636, targetId: 157, metadata: { tekenbevoegd: false } },
+  { sourceId: 1637, targetId: 157, metadata: { tekenbevoegd: false } },
+  { sourceId: 1639, targetId: 157, metadata: { tekenbevoegd: false } },
+  { sourceId: 1648, targetId: 157, metadata: { tekenbevoegd: false } },
+  { sourceId: 1641, targetId: 157, metadata: { tekenbevoegd: false } },
 ];
-
-// ─── Bootstrap ────────────────────────────────────────────────────────────────
-
-async function seedLinkTypes(strapi) {
-  for (const lt of SEED_LINK_TYPES) {
-    const existing = await strapi.entityService.findMany(LINK_TYPE_UID, {
-      filters: { name: lt.name },
-      limit: 1,
-    });
-    if (existing.length === 0) {
-      await strapi.entityService.create(LINK_TYPE_UID, { data: lt });
-      strapi.log.info(`[temporal-relations] seeded link type "${lt.name}"`);
-    }
-  }
-}
 
 async function upsertByExternalId(strapi, uid, data, uniqueField) {
   const payload = { ...data, publishedAt: new Date().toISOString() };
+
   let existing = [];
   if (payload.external_id !== undefined && payload.external_id !== null) {
     existing = await strapi.entityService.findMany(uid, {
@@ -172,93 +142,80 @@ async function seedCoreEntities(strapi) {
   }
 }
 
-async function normalizeLinkIds(strapi, linkTypeName, sourceUid, targetUid) {
-  const sourceRows = await strapi.entityService.findMany(sourceUid, { fields: ['id', 'external_id'], limit: 2000 });
-  const targetRows = await strapi.entityService.findMany(targetUid, { fields: ['id', 'external_id'], limit: 2000 });
+async function ensureLinkTypes(strapi) {
+  const relationSvc = strapi.service('plugin::temporal-relations.temporal-relation');
+  const existing = await relationSvc.listLinkTypes();
+  const existingByName = new Map(existing.map((item) => [item.name, item]));
 
-  const sourceMap = new Map(sourceRows.filter((r) => r.external_id).map((r) => [r.id, r.external_id]));
-  const targetMap = new Map(targetRows.filter((r) => r.external_id).map((r) => [r.id, r.external_id]));
-
-  const links = await strapi.db.query(LINK_UID).findMany({ where: { link_type: linkTypeName } });
-
-  for (const link of links) {
-    const mappedSource = sourceMap.get(link.source_id) ?? link.source_id;
-    const mappedTarget = targetMap.get(link.target_id) ?? link.target_id;
-
-    if (mappedSource === link.source_id && mappedTarget === link.target_id) continue;
-
-    const duplicate = await strapi.db.query(LINK_UID).findOne({
-      where: {
-        link_type: linkTypeName,
-        source_id: mappedSource,
-        target_id: mappedTarget,
-        start_date: link.start_date,
-        end_date: link.end_date,
-      },
-    });
-
-    if (duplicate) {
-      await strapi.db.query(LINK_UID).delete({ where: { id: link.id } });
-      continue;
+  for (const linkType of SEED_LINK_TYPES) {
+    if (!existingByName.has(linkType.name)) {
+      await relationSvc.createLinkType(linkType);
+      strapi.log.info(`[temporal-relations] created table-backed link type "${linkType.name}"`);
     }
-
-    await strapi.db.query(LINK_UID).update({
-      where: { id: link.id },
-      data: { source_id: mappedSource, target_id: mappedTarget },
-    });
   }
 }
 
-async function seedLinks(strapi, linkTypeName, rows) {
-  for (const row of rows) {
-    const filters = {
-      link_type: linkTypeName,
-      source_id: row.source_id,
-      target_id: row.target_id,
-      start_date: row.start_date ?? OPEN_START,
-      end_date:   row.end_date   ?? OPEN_END,
-    };
-    const existing = await strapi.entityService.findMany(LINK_UID, {
-      filters,
-      limit: 1,
-    });
-    if (existing.length === 0) {
-      await strapi.entityService.create(LINK_UID, {
-        data: {
-          link_type:  linkTypeName,
-          source_id:  row.source_id,
-          target_id:  row.target_id,
-          start_date: row.start_date ?? OPEN_START,
-          end_date:   row.end_date   ?? OPEN_END,
-          metadata:   row.metadata   ?? null,
-        },
-      });
-    }
+async function seedLinks(strapi, linkType, links) {
+  const relationSvc = strapi.service('plugin::temporal-relations.temporal-relation');
+  const result = await relationSvc.importLinks(linkType, links);
+  strapi.log.info(`[temporal-relations] seeded ${result.created + result.updated} rows for "${linkType}"`);
+}
+
+async function backfillLegacyLinks(strapi) {
+  const knex = strapi.db.connection;
+  const hasLegacy = await knex.schema.hasTable('temporal_links');
+  if (!hasLegacy) return;
+
+  const relationSvc = strapi.service('plugin::temporal-relations.temporal-relation');
+  const linkTypes = await relationSvc.listLinkTypes();
+
+  for (const linkType of linkTypes) {
+    const legacyRows = await knex('temporal_links').where({ link_type: linkType.name }).select(
+      'source_id',
+      'target_id',
+      'start_date',
+      'end_date',
+      'metadata'
+    );
+    if (!legacyRows.length) continue;
+
+    const payload = legacyRows.map((row) => ({
+      sourceId: row.source_id,
+      targetId: row.target_id,
+      startDate: row.start_date,
+      endDate: row.end_date,
+      metadata: row.metadata,
+    }));
+
+    const result = await relationSvc.importLinks(linkType.name, payload);
+    strapi.log.info(
+      `[temporal-relations] backfilled ${result.created} created / ${result.updated} updated from temporal_links into ${linkType.table_name}`
+    );
   }
-  strapi.log.info(`[temporal-relations] seeded ${rows.length} links for "${linkTypeName}"`);
 }
 
 async function seedKoppelingPersoonBedrijfDemo(strapi) {
+  const relationSvc = strapi.service('plugin::temporal-relations.temporal-relation');
   const demoRows = [
     {
       username: 'jbiermans',
-      target_id: 1,
-      start_date: '2019-01-01',
-      end_date: '2023-12-31',
+      targetId: 1,
+      startDate: '2019-01-01',
+      endDate: '2023-12-31',
       metadata: { tekenbevoegd: false },
     },
     {
       username: 'jbiermans',
-      target_id: 1,
-      start_date: '2024-01-01',
-      end_date: OPEN_END,
+      targetId: 1,
+      startDate: '2024-01-01',
+      endDate: OPEN_END,
       metadata: { tekenbevoegd: true },
     },
     {
       username: 'rgroot',
-      target_id: 1,
-      start_date: '2025-01-01',
-      end_date: OPEN_END,
+      targetId: 1,
+      startDate: '2025-01-01',
+      endDate: OPEN_END,
       metadata: { tekenbevoegd: false },
     },
   ];
@@ -270,54 +227,36 @@ async function seedKoppelingPersoonBedrijfDemo(strapi) {
     });
     if (!persoon.length) continue;
 
-    const source_id = persoon[0].external_id ?? persoon[0].id;
-    const filters = {
-      link_type: 'koppeling_persoon_bedrijf',
-      source_id,
-      target_id: row.target_id,
-      start_date: row.start_date,
-      end_date: row.end_date,
-    };
-
-    const existing = await strapi.entityService.findMany(LINK_UID, { filters, limit: 1 });
-    if (existing.length === 0) {
-      await strapi.entityService.create(LINK_UID, {
-        data: {
-          link_type: 'koppeling_persoon_bedrijf',
-          source_id,
-          target_id: row.target_id,
-          start_date: row.start_date,
-          end_date: row.end_date,
-          metadata: row.metadata,
-        },
-      });
-    }
+    const sourceId = persoon[0].external_id ?? persoon[0].id;
+    await relationSvc.importLinks('koppeling_persoon_bedrijf', [{
+      sourceId,
+      targetId: row.targetId,
+      startDate: row.startDate,
+      endDate: row.endDate,
+      metadata: row.metadata,
+    }]);
   }
 }
 
-// ─── Plugin export ────────────────────────────────────────────────────────────
-
 module.exports = () => ({
-  register(/*{ strapi }*/) {},
+  register() {},
 
   async bootstrap({ strapi }) {
     strapi.log.info('[temporal-relations] Bootstrap function started');
     try {
       await seedCoreEntities(strapi);
-      await seedLinkTypes(strapi);
-      strapi.log.info('[temporal-relations] Link types seeded successfully');
-      await normalizeLinkIds(strapi, 'bedrijven_groepen_range', BEDRIJF_UID, GROEP_UID);
-      await normalizeLinkIds(strapi, 'koppeling_persoon_bedrijf', PERSON_UID, BEDRIJF_UID);
+      await ensureLinkTypes(strapi);
+      await backfillLegacyLinks(strapi);
       await seedLinks(strapi, 'bedrijven_groepen_range', SEED_LINKS_BGR);
-      strapi.log.info('[temporal-relations] Links for bedrijven_groepen_range seeded successfully');
       await seedLinks(strapi, 'koppeling_persoon_bedrijf', SEED_LINKS_KPB);
       await seedKoppelingPersoonBedrijfDemo(strapi);
-      strapi.log.info('[temporal-relations] Links for koppeling_persoon_bedrijf seeded successfully');
+      strapi.log.info('[temporal-relations] bootstrap seed completed');
     } catch (error) {
       strapi.log.error('[temporal-relations] Error during bootstrap:', error);
     }
   },
-  destroy(/*{ strapi }*/) {},
+
+  destroy() {},
   contentTypes,
   controllers,
   middlewares,

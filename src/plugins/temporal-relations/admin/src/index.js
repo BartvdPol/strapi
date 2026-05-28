@@ -3,10 +3,9 @@ import pluginId from './pluginId';
 import PluginIcon from './components/PluginIcon';
 import getTrad from './utils/getTrad';
 import { prefixPluginTranslations } from './utils/prefixPluginTranslations';
-import TemporalGroepenPanel from './components/TemporalGroepenPanel';
 import TemporalBedrijvenPanel from './components/TemporalBedrijvenPanel';
-import TemporalPersonenPanel from './components/TemporalPersonenPanel';
 import TemporalBedrijvenByPersoonPanel from './components/TemporalBedrijvenByPersoonPanel';
+import TemporalBedrijfToBedrijfPanel from './components/TemporalBedrijfToBedrijfPanel';
 
 export default {
   register(app) {
@@ -35,17 +34,8 @@ export default {
           const linkId = document?.external_id ?? document?.id;
           if (!linkId) return null;
           return {
-            title: 'Groepen (tijdgebonden)',
-            content: React.createElement(TemporalGroepenPanel, { bedrijfNumericId: linkId }),
-          };
-        },
-        ({ document, model }) => {
-          if (model !== 'api::bedrijf.bedrijf') return null;
-          const linkId = document?.external_id ?? document?.id;
-          if (!linkId) return null;
-          return {
-            title: 'Personen (tijdgebonden)',
-            content: React.createElement(TemporalPersonenPanel, { bedrijfNumericId: linkId }),
+            title: 'Relaties (tijdgebonden)',
+            content: React.createElement(TemporalBedrijfToBedrijfPanel, { bedrijfNumericId: linkId }),
           };
         },
         ({ document, model }) => {

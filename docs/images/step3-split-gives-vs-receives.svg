@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640">
+  <rect width="1200" height="640" fill="#f4f7fb"/>
+  <text x="60" y="70" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2d3d">Step 3: Split by Gives vs Receives</text>
+
+  <rect x="70" y="120" width="500" height="450" rx="16" fill="#ffffff" stroke="#d2ddea"/>
+  <text x="105" y="170" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#0b5394">Gives profit (Outgoing)</text>
+  <text x="105" y="220" font-family="Consolas, monospace" font-size="17" fill="#333">GET /links/source-history</text>
+  <text x="105" y="255" font-family="Consolas, monospace" font-size="17" fill="#333">?linkType=bedrijf_winst_ontvanger</text>
+  <text x="105" y="290" font-family="Consolas, monospace" font-size="17" fill="#333">&sourceId=336</text>
+  <text x="105" y="340" font-family="Segoe UI, Arial, sans-serif" font-size="22" fill="#1f2d3d">Company 336 pays to:</text>
+  <text x="130" y="380" font-family="Consolas, monospace" font-size="20" fill="#1f2d3d">- company 334 (70%)</text>
+  <text x="130" y="415" font-family="Consolas, monospace" font-size="20" fill="#1f2d3d">- company 335 (30%, 40%)</text>
+
+  <rect x="630" y="120" width="500" height="450" rx="16" fill="#ffffff" stroke="#d2ddea"/>
+  <text x="665" y="170" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#38761d">Receives profit (Incoming)</text>
+  <text x="665" y="220" font-family="Consolas, monospace" font-size="17" fill="#333">GET /links/target-history</text>
+  <text x="665" y="255" font-family="Consolas, monospace" font-size="17" fill="#333">?linkType=bedrijf_winst_ontvanger</text>
+  <text x="665" y="290" font-family="Consolas, monospace" font-size="17" fill="#333">&targetId=334</text>
+  <text x="665" y="340" font-family="Segoe UI, Arial, sans-serif" font-size="22" fill="#1f2d3d">Company 334 receives from:</text>
+  <text x="690" y="380" font-family="Consolas, monospace" font-size="20" fill="#1f2d3d">- company 336</text>
+
+  <path d="M 570 330 L 630 330" stroke="#4a86e8" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4a86e8"/>
+    </marker>
+  </defs>
+</svg>

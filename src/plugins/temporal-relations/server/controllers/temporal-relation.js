@@ -65,12 +65,12 @@ async function createLinkType(ctx) {
 async function updateLinkType(ctx) {
   const { id } = ctx.params;
   const { sourceUid, targetUid, sourceLabel, targetLabel, description } = ctx.request.body;
-  ctx.body = { data: await svc().updateLinkType(Number(id), { sourceUid, targetUid, sourceLabel, targetLabel, description }) };
+  ctx.body = { data: await svc().updateLinkType(id, { sourceUid, targetUid, sourceLabel, targetLabel, description }) };
 }
 
 async function deleteLinkType(ctx) {
   const { id } = ctx.params;
-  ctx.body = { data: await svc().deleteLinkType(Number(id)) };
+  ctx.body = { data: await svc().deleteLinkType(id) };
 }
 
 // ─── LINKS — list / paginate ─────────────────────────────────────────────────
