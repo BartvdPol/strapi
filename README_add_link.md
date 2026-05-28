@@ -317,6 +317,46 @@ What it shows:
 
 This means existing and new link tables should appear automatically on Bedrijf records without extra panel code per type.
 
+### 10.7 Link actions in GUI
+
+For each dynamic link row in the Bedrijf panel, you can now:
+
+1. Open item: jump to the linked content item in Content Manager.
+2. Bewerk: edit dates and typed extra fields.
+3. Beëindig: set end date to today.
+4. Verwijder: delete link row.
+
+### 10.8 Compact add controls
+
+Add forms are collapsed by default.
+
+Use `+ Toevoegen` to open, and `Annuleer` to collapse again.
+
+This keeps the panel compact when you are not editing.
+
+### 10.9 Reorder dynamic entries
+
+Each dynamic link type block has `↑` and `↓` buttons.
+
+Use those to reorder visual blocks in the Bedrijf panel. The order is stored in browser local storage and reused on refresh.
+
+### 10.10 Typed extra fields (no raw JSON input)
+
+Dynamic forms now render typed fields per link type profile.
+
+1. Profit-style links (`winst` in link type name):
+- berekendOp
+- winstgerechtigdeType
+- percentageEersteSchaal
+- bedragEersteSchaal
+- restantPercentage
+- winstgerechtigdenId
+
+2. `koppeling_persoon_bedrijf` links:
+- tekenbevoegd (boolean)
+
+These are stored in metadata internally, but in the GUI you work with normal typed form fields instead of JSON text.
+
 ## 11. Important note for mixed receiver ids
 
 If `ontvanger_bedrijf_id_of_persoon_id` can represent both company and person ids, do not mix those domains in one company-to-company relation type.
